@@ -5,175 +5,217 @@
     <title>UsahaKita | Solusi Penjualan UMKM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ================= LOADING ================= */
-        #loading {
-            position: fixed;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(135deg, #e8f5e9, #ffffff);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .loader-container {
-            text-align: center;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        .logo {
-            font-size: 42px;
-            font-weight: 700;
-            color: #2e7d32;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 25px;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #c8e6c9;
-            border-top: 6px solid #4caf50;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: auto;
-        }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* ================= LANDING ================= */
         body {
-            background: linear-gradient(to right, #f7fbe7, #ffffff);
+            background: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        /* ================= HERO ================= */
+
+        .hero-wrapper {
+            background: white;
+            border-radius: 30px;
+            margin: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.1);
         }
 
         .hero {
-            padding: 90px 0;
+            display: flex;
+            align-items: center;
+            min-height: 85vh;
         }
 
-        .hero h1 {
-            font-size: 44px;
+        .hero-left {
+            flex: 1;
+            padding: 80px;
+        }
+
+        .hero-left h1 {
+            font-size: 48px;
             font-weight: 700;
-            color: #2e7d32;
+            color: #111;
+            line-height: 1.2;
         }
 
-        .hero p {
+        .hero-left p {
+            margin-top: 20px;
             font-size: 18px;
-            color: #555;
+            color: #666;
+            max-width: 450px;
         }
 
         .btn-main {
-            background: #4caf50;
+            margin-top: 30px;
+            display: inline-block;
+            padding: 14px 36px;
+            background: black;
             color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: 600;
             text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .btn-main:hover {
+            background: #333;
+            transform: translateY(-3px);
+        }
+
+        /* ================= RIGHT SIDE ================= */
+
+        .hero-right {
+            flex: 1;
+            background: #111;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top-left-radius: 120px;
+        }
+
+        .hero-right img {
+            width: 75%;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        /* ================= FEATURES ================= */
+
+        .features {
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 32px;
+            margin-bottom: 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
         }
 
         .feature {
             background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,.05);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: 0.3s;
         }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature h5 {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+            }
+
+            .hero-left {
+                padding: 50px 30px;
+                text-align: center;
+            }
+
+            .hero-left p {
+                margin: auto;
+            }
+
+            .hero-right {
+                border-radius: 0;
+                padding: 40px 0;
+            }
+        }
+
     </style>
 </head>
 <body>
 
-<!-- ================= LOADING SCREEN ================= -->
-<div id="loading">
-    <div class="loader-container">
-        <div class="logo">UsahaKita</div>
-        <div class="subtitle">Solusi Digital Penjualan UMKM</div>
-        <div class="spinner"></div>
-    </div>
+<div class="hero-wrapper">
+
+    <section class="hero">
+        
+        <!-- LEFT -->
+        <div class="hero-left">
+            <h1>Freshness<br>In Every Business</h1>
+            <p>
+                Platform digital modern untuk membantu UMKM mengelola produk,
+                transaksi, dan laporan secara efisien dengan sistem berbasis Laravel.
+            </p>
+
+            <a href="/login" class="btn-main">Get Started</a>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="hero-right">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+                 alt="Business Image">
+        </div>
+
+    </section>
+
 </div>
 
-<!-- ================= LANDING PAGE ================= -->
-<div id="content" style="display:none;">
+<section class="features">
+    <h2>Why Choose Us?</h2>
 
-<section class="hero">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1>Solusi Modern<br>Manajemen Penjualan UMKM</h1>
-                <p class="mt-3">
-                    Platform penjualan online berbasis web untuk membantu UMKM
-                    mengelola produk, transaksi, dan laporan secara efisien
-                    menggunakan <b>Laravel 12</b>.
-                </p>
-                <a href="" class="btn-main mt-4 d-inline-block">
-                    Mulai Sekarang
-                </a>
-            </div>
-            <div class="col-md-6 text-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png"
-                     class="img-fluid" style="max-height: 360px">
-            </div>
+    <div class="feature-grid">
+        <div class="feature">
+            <h5>Product Management</h5>
+            <p>Kelola produk dengan sistem terstruktur dan mudah digunakan.</p>
+        </div>
+
+        <div class="feature">
+            <h5>Transaction System</h5>
+            <p>Proses penjualan cepat dengan monitoring real-time.</p>
+        </div>
+
+        <div class="feature">
+            <h5>Automatic Reports</h5>
+            <p>Laporan penjualan otomatis dan akurat.</p>
+        </div>
+
+        <div class="feature">
+            <h5>Multi Role</h5>
+            <p>Admin, Penjual, dan Pelanggan dalam satu platform.</p>
         </div>
     </div>
 </section>
 
-<section class="pb-5">
-    <div class="container">
-        <div class="row g-4 text-center">
-            <div class="col-md-3">
-                <div class="feature">
-                    <h5>Kelola Produk</h5>
-                    <p class="text-muted">Manajemen produk UMKM lebih mudah</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature">
-                    <h5>Transaksi</h5>
-                    <p class="text-muted">Proses jual beli cepat & aman</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature">
-                    <h5>Laporan</h5>
-                    <p class="text-muted">Rekap penjualan otomatis</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="feature">
-                    <h5>Multi User</h5>
-                    <p class="text-muted">Admin & penjual terpisah</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer class="text-center text-muted py-4">
-    © {{ date('Y') }} UsahaKita | Web Programming
+<footer>
+    © {{ date('Y') }} UsahaKita — Elegant Digital Platform
 </footer>
 
-</div>
-
-<script>
-    // Loading selama 2.5 detik
-    setTimeout(() => {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-    }, 2500);
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

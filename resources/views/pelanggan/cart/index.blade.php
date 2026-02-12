@@ -1,100 +1,122 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Keranjang Belanja | UsahaKita</title>
+    @vite(['resources/css/app.css','resources/js/app.js'])
+</head>
 
-@section('title', 'Keranjang Belanja')
+<body class="bg-zinc-50 min-h-screen text-zinc-800">
 
-@section('content')
-    <div class="max-w-6xl mx-auto space-y-8">
+<div class="max-w-6xl mx-auto px-8 py-14 space-y-12">
 
-        <!-- HEADER -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                    Keranjang Belanja
-                </h1>
-                <p class="text-sm text-gray-500">
-                    Periksa kembali produk sebelum checkout
-                </p>
-            </div>
+    <!-- HEADER -->
+    <div class="flex items-end justify-between">
 
-            <a href="{{ route('pelanggan.home') }}"
-                class="border border-black text-black px-4 py-2 rounded-full
-                  hover:bg-black hover:text-white transition">
-                ← Kembali Belanja
-            </a>
+        <div>
+            <h1 class="text-3xl font-semibold tracking-tight">
+                Keranjang Belanja
+            </h1>
+            <p class="text-zinc-500 text-sm mt-2">
+                Tinjau kembali produk sebelum melanjutkan ke pembayaran
+            </p>
         </div>
 
-        <!-- ISI KERANJANG -->
-        <div class="bg-white rounded-2xl shadow overflow-hidden">
-            @if ($cartItems->count())
+        <a href="{{ route('pelanggan.home') }}"
+           class="px-5 py-2.5 rounded-full
+                  border border-zinc-300
+                  text-sm font-medium
+                  hover:border-zinc-900
+                  hover:bg-zinc-900 hover:text-white
+                  transition duration-300">
+            Kembali Belanja
+        </a>
+    </div>
 
-                <table class="w-full">
-                    <thead class="bg-black text-white">
-                        <tr class="text-left text-sm">
-                            <th class="p-4">Produk</th>
-                            <th class="p-4">Harga</th>
-                            <th class="p-4">Jumlah</th>
-                            <th class="p-4">Subtotal</th>
-                            <th class="p-4 text-center">Aksi</th>
+
+    <!-- CONTENT -->
+    <div class="bg-white rounded-3xl border border-zinc-200 overflow-hidden">
+
+        @if ($cartItems->count())
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+
+                    <thead class="bg-zinc-100 text-zinc-600 uppercase tracking-wide text-xs">
+                        <tr>
+                            <th class="px-8 py-5 text-left font-medium">Produk</th>
+                            <th class="px-8 py-5 text-left font-medium">Harga</th>
+                            <th class="px-8 py-5 text-left font-medium">Jumlah</th>
+                            <th class="px-8 py-5 text-left font-medium">Subtotal</th>
+                            <th class="px-8 py-5 text-center font-medium">Aksi</th>
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody class="divide-y divide-zinc-200">
+
                         @php $total = 0; @endphp
 
                         @foreach ($cartItems as $item)
+
                             @php
                                 $subtotal = $item->quantity * $item->produk->harga_jual;
                                 $total += $subtotal;
                             @endphp
 
-                            <tr class="border-b hover:bg-gray-50">
-                                <!-- Produk -->
-                                <td class="p-4 flex items-center gap-4">
-                                    <img src="{{ $item->produk->gambar ? asset('uploads/produk/' . $item->produk->gambar) : asset('images/no-image.png') }}"
-                                        class="w-16 h-16 object-cover rounded-lg grayscale">
+                            <tr class="hover:bg-zinc-50 transition">
 
-                                    <div>
-                                        <p class="font-semibold text-gray-900">
-                                            {{ $item->produk->nama_produk }}
-                                        </p>
-                                        <p class="text-sm text-gray-500">
-                                            {{ $item->produk->satuan }}
-                                        </p>
+                                <!-- Produk -->
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-5">
+
+                                        <img src="{{ $item->produk->gambar ? asset('uploads/produk/' . $item->produk->gambar) : asset('images/no-image.png') }}"
+                                             class="w-20 h-20 object-cover rounded-2xl border border-zinc-200">
+
+                                        <div>
+                                            <p class="font-medium text-base">
+                                                {{ $item->produk->nama_produk }}
+                                            </p>
+                                            <p class="text-zinc-500 text-xs mt-1">
+                                                {{ $item->produk->satuan }}
+                                            </p>
+                                        </div>
+
                                     </div>
                                 </td>
 
                                 <!-- Harga -->
-                                <td class="p-4 text-gray-800 font-medium">
+                                <td class="px-8 py-6 font-medium">
                                     Rp {{ number_format($item->produk->harga_jual, 0, ',', '.') }}
                                 </td>
 
                                 <!-- Quantity -->
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-3">
 
-                                        {{-- tombol minus --}}
                                         <form action="{{ route('pelanggan.cart.decrease', $item->id_cart) }}" method="POST">
                                             @csrf
                                             <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center
-                       rounded-full border border-gray-300
-                       hover:bg-gray-200 transition">
+                                                class="w-9 h-9 rounded-full
+                                                       border border-zinc-300
+                                                       hover:border-zinc-900
+                                                       hover:bg-zinc-900 hover:text-white
+                                                       transition">
                                                 −
                                             </button>
                                         </form>
 
-                                        {{-- jumlah --}}
-                                        <span class="w-8 text-center font-semibold">
+                                        <span class="w-8 text-center font-semibold text-base">
                                             {{ $item->quantity }}
                                         </span>
 
-                                        {{-- tombol plus --}}
                                         <form action="{{ route('pelanggan.cart.increase', $item->id_cart) }}" method="POST">
                                             @csrf
                                             <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center
-                       rounded-full border border-gray-300
-                       hover:bg-gray-200 transition">
+                                                class="w-9 h-9 rounded-full
+                                                       border border-zinc-300
+                                                       hover:border-zinc-900
+                                                       hover:bg-zinc-900 hover:text-white
+                                                       transition">
                                                 +
                                             </button>
                                         </form>
@@ -102,52 +124,71 @@
                                     </div>
                                 </td>
 
-
                                 <!-- Subtotal -->
-                                <td class="p-4 font-semibold">
+                                <td class="px-8 py-6 font-semibold">
                                     Rp {{ number_format($subtotal, 0, ',', '.') }}
                                 </td>
 
                                 <!-- Aksi -->
-                                <td class="p-4 text-center">
-                                    <form action="{{ route('pelanggan.cart.delete', $item->id_cart) }}" method="POST"
-                                        onsubmit="return confirm('Hapus produk dari keranjang?')">
+                                <td class="px-8 py-6 text-center">
+                                    <form action="{{ route('pelanggan.cart.delete', $item->id_cart) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Hapus produk dari keranjang?')">
                                         @csrf
                                         @method('DELETE')
 
-                                        <button class="text-red-600 hover:text-red-800 text-sm font-semibold">
+                                        <button class="text-zinc-500 hover:text-red-600 font-medium transition">
                                             Hapus
                                         </button>
                                     </form>
                                 </td>
+
                             </tr>
+
                         @endforeach
+
                     </tbody>
                 </table>
+            </div>
 
-                <!-- TOTAL -->
-                <div class="p-6 flex items-center justify-between border-t">
-                    <p class="text-lg font-semibold">
-                        Total:
-                        <span class="text-black">
-                            Rp {{ number_format($total, 0, ',', '.') }}
-                        </span>
-                    </p>
 
-                    <a href="{{ route('checkout.index') }}"
-                        class="bg-black text-white px-6 py-3 rounded-full
-                        hover:bg-gray-800 transition">
-                        Checkout
-                    </a>
+            <!-- TOTAL SECTION -->
+            <div class="border-t border-zinc-200 px-8 py-8 flex items-center justify-between bg-zinc-50">
 
-                </div>
-            @else
-                <div class="p-10 text-center">
-                    <p class="text-gray-500">
-                        Keranjang kamu masih kosong 🛒
+                <div>
+                    <p class="text-sm text-zinc-500">Total Pembayaran</p>
+                    <p class="text-2xl font-semibold mt-1">
+                        Rp {{ number_format($total, 0, ',', '.') }}
                     </p>
                 </div>
-            @endif
-        </div>
+
+                <a href="{{ route('checkout.index') }}"
+                   class="px-8 py-3 rounded-full
+                          bg-zinc-900 text-white
+                          text-sm font-medium
+                          hover:bg-black
+                          transition duration-300">
+                    Lanjut ke Checkout
+                </a>
+
+            </div>
+
+        @else
+
+            <div class="py-20 text-center text-zinc-500">
+                <p class="text-lg font-medium">
+                    Keranjang masih kosong
+                </p>
+                <p class="text-sm mt-2">
+                    Tambahkan produk untuk mulai berbelanja.
+                </p>
+            </div>
+
+        @endif
+
     </div>
-@endsection
+
+</div>
+
+</body>
+</html>

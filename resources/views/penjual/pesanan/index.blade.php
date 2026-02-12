@@ -1,93 +1,138 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Pesanan | UsahaKita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    @vite('resources/css/app.css')
+</head>
 
-@section('title', 'Daftar Pesanan')
+<body class="bg-neutral-100 min-h-screen font-[Inter] p-8">
 
-@section('content')
-<div class="container mx-auto p-6">
+<div class="max-w-7xl mx-auto">
 
-    <h3 class="text-2xl font-semibold mb-6">🧾 Daftar Pesanan</h3>
+    <!-- Header -->
+    <div class="mb-10">
+        <h1 class="text-3xl font-semibold text-gray-900 tracking-wide">
+            Daftar Pesanan
+        </h1>
+        <p class="text-gray-500 text-sm mt-2">
+            Kelola dan pantau seluruh transaksi pelanggan
+        </p>
+    </div>
 
     @if(session('success'))
-        <div class="bg-green-100 text-green-800 p-4 rounded mb-4">
+        <div class="mb-6 bg-neutral-900 text-white px-6 py-4 rounded-2xl shadow-lg">
             {{ session('success') }}
         </div>
     @endif
 
     @if($pesanan->isEmpty())
-    <div class="bg-yellow-100 text-yellow-800 p-4 rounded">
-        Tidak ada pesanan saat ini.
-    </div>
-@else
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white shadow rounded-lg overflow-hidden">
-            <thead class="bg-gray-100 text-gray-600 uppercase text-sm">
-                <tr>
-                    <th class="py-3 px-4 text-left">#</th>
-                    <th class="py-3 px-4 text-left">Kode Transaksi</th>
-                    <th class="py-3 px-4 text-left">Nama Pembeli</th>
-                    <th class="py-3 px-4 text-left">Total Harga</th>
-                    <th class="py-3 px-4 text-left">Status</th>
-                    <th class="py-3 px-4 text-left">Tanggal</th>
-                    <th class="py-3 px-4 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($pesanan as $index => $order)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="py-3 px-4">{{ $index + 1 }}</td>
-                        <td class="py-3 px-4 font-medium">{{ $order->kode_transaksi }}</td>
-                        <td class="py-3 px-4">{{ $order->user->name ?? '-' }}</td>
-                        <td class="py-3 px-4">Rp {{ number_format($order->grand_total, 0, ',', '.') }}</td>
-                        <td class="py-3 px-4">
-                            <form action="{{ route('penjual.pesanan.switchStatus', $order->id_transaksi) }}"
-                                  method="POST">
-                                @csrf
-                                @method('PUT')
-                        
-                                <button type="submit">
-                                    @if($order->status == 'pending')
-                                        <span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs hover:bg-yellow-300">
-                                            Pending
-                                        </span>
-                                    @elseif($order->status == 'diproses')
-                                        <span class="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs hover:bg-blue-300">
-                                            Diproses
-                                        </span>
-                                    @elseif($order->status == 'dikirim')
-                                        <span class="bg-indigo-200 text-indigo-800 px-2 py-1 rounded-full text-xs hover:bg-indigo-300">
-                                            Dikirim
-                                        </span>
-                                    @elseif($order->status == 'selesai')
-                                        <span class="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs">
-                                            Selesai
-                                        </span>
-                                    @else
-                                        <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs">
-                                            {{ $order->status }}
-                                        </span>
-                                    @endif
-                                </button>
-                            </form>
-                        </td>                        
-                        <td class="py-3 px-4">{{ \Carbon\Carbon::parse($order->tanggal)->format('d M Y H:i') }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <a href="{{ route('penjual.pesanan.show', $order->id_transaksi) }}"
-                               class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition text-sm">
-                                Detail
-                            </a>
-                        </td>
+
+        <div class="bg-white rounded-[32px] shadow-[0_30px_90px_rgba(0,0,0,0.08)]
+                    p-16 text-center text-gray-400">
+            Tidak ada pesanan saat ini.
+        </div>
+
+    @else
+
+    <div class="bg-white rounded-[32px]
+                shadow-[0_30px_90px_rgba(0,0,0,0.08)]
+                overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-sm">
+
+                <!-- Head -->
+                <thead class="bg-neutral-50 text-gray-500 uppercase tracking-wider text-xs">
+                    <tr>
+                        <th class="px-8 py-5 text-left">No</th>
+                        <th class="px-8 py-5 text-left">Kode</th>
+                        <th class="px-8 py-5 text-left">Pembeli</th>
+                        <th class="px-8 py-5 text-left">Total</th>
+                        <th class="px-8 py-5 text-left">Status</th>
+                        <th class="px-8 py-5 text-left">Tanggal</th>
+                        <th class="px-8 py-5 text-center">Aksi</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+
+                <!-- Body -->
+                <tbody class="divide-y divide-gray-100">
+
+                    @foreach($pesanan as $index => $order)
+                        <tr class="hover:bg-neutral-50 transition duration-300">
+
+                            <td class="px-8 py-6 text-gray-500">
+                                {{ $index + 1 }}
+                            </td>
+
+                            <td class="px-8 py-6 font-medium text-gray-900">
+                                {{ $order->kode_transaksi }}
+                            </td>
+
+                            <td class="px-8 py-6 text-gray-700">
+                                {{ $order->user->name ?? '-' }}
+                            </td>
+
+                            <td class="px-8 py-6 font-semibold text-gray-900">
+                                Rp {{ number_format($order->grand_total, 0, ',', '.') }}
+                            </td>
+
+                            <!-- Status -->
+                            <td class="px-8 py-6">
+                                <form action="{{ route('penjual.pesanan.switchStatus', $order->id_transaksi) }}"
+                                      method="POST">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <button type="submit"
+                                        class="px-4 py-1.5 rounded-full text-xs font-medium
+                                               transition duration-300
+                                               {{ $order->status == 'pending' ? 'bg-neutral-200 text-gray-700 hover:bg-neutral-300' : '' }}
+                                               {{ $order->status == 'diproses' ? 'bg-black text-white hover:bg-gray-800' : '' }}
+                                               {{ $order->status == 'dikirim' ? 'bg-neutral-800 text-white hover:bg-black' : '' }}
+                                               {{ $order->status == 'selesai' ? 'bg-neutral-900 text-white' : '' }}">
+                                        {{ ucfirst($order->status) }}
+                                    </button>
+
+                                </form>
+                            </td>
+
+                            <td class="px-8 py-6 text-gray-500">
+                                {{ \Carbon\Carbon::parse($order->tanggal)->format('d M Y H:i') }}
+                            </td>
+
+                            <td class="px-8 py-6 text-center">
+                                <a href="{{ route('penjual.pesanan.show', $order->id_transaksi) }}"
+                                   class="inline-block px-6 py-2 
+                                          bg-black text-white rounded-full
+                                          text-xs tracking-wide
+                                          transition duration-300
+                                          hover:bg-gray-800 hover:scale-105">
+                                    Detail
+                                </a>
+                            </td>
+
+                        </tr>
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
     </div>
 
     <!-- Pagination -->
-    <div class="mt-4">
+    <div class="mt-8">
         {{ $pesanan->links() }}
     </div>
-@endif
 
+    @endif
 
 </div>
-@endsection
+
+</body>
+</html>

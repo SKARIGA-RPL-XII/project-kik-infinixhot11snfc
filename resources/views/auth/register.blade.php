@@ -1,35 +1,119 @@
-@extends('layouts.guest')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Usaha Kita</title>
 
-@section('content')
-<h2>Register UsahaKita</h2>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-@if ($errors->any())
-    <ul style="color:red">
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-@endif
+    @vite('resources/css/app.css')
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-zinc-900 to-black font-[Poppins]">
 
-<form method="POST" action="/register">
-    @csrf
+    <div class="w-[420px]">
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 
+                    p-10 rounded-2xl shadow-2xl text-white 
+                    transition duration-300 hover:-translate-y-1">
 
-    <input type="text" name="name" placeholder="Nama Lengkap" required><br><br>
+            <!-- Brand -->
+            <div class="text-center mb-6 text-2xl font-semibold tracking-widest">
+                USAHA <span class="font-light text-gray-400">KITA</span>
+            </div>
 
-    <input type="email" name="email" placeholder="Email" required><br><br>
+            <h2 class="text-center text-xl font-semibold mb-2">Register</h2>
+            <p class="text-center text-sm text-gray-400 mb-8">
+                Buat akun untuk mulai menggunakan sistem
+            </p>
 
-    <input type="password" name="password" placeholder="Password" required><br><br>
+            <!-- Error Message -->
+            @if ($errors->any())
+                <div class="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
+                    <ul class="space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>• {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-    <input type="password" name="password_confirmation" placeholder="Konfirmasi Password" required><br><br>
+            <form method="POST" action="/register" class="space-y-5">
+                @csrf
 
-    <select name="role" required>
-        <option value="">-- Pilih Role --</option>
-        <option value="penjual">Penjual</option>
-        <option value="pembeli">Pembeli</option>
-    </select><br><br>
+                <!-- Nama -->
+                <div>
+                    <label class="text-sm text-gray-300">Nama Lengkap</label>
+                    <input type="text" name="name" required
+                        class="w-full mt-2 px-4 py-3 rounded-xl bg-transparent 
+                               border border-white/20 text-white text-sm
+                               focus:outline-none focus:border-white
+                               focus:ring-2 focus:ring-white/30 transition">
+                </div>
 
-    <button type="submit">Daftar</button>
-</form>
+                <!-- Email -->
+                <div>
+                    <label class="text-sm text-gray-300">Email</label>
+                    <input type="email" name="email" required
+                        class="w-full mt-2 px-4 py-3 rounded-xl bg-transparent 
+                               border border-white/20 text-white text-sm
+                               focus:outline-none focus:border-white
+                               focus:ring-2 focus:ring-white/30 transition">
+                </div>
 
-<p>Sudah punya akun? <a href="/login">Login</a></p>
-@endsection
+                <!-- Password -->
+                <div>
+                    <label class="text-sm text-gray-300">Password</label>
+                    <input type="password" name="password" required
+                        class="w-full mt-2 px-4 py-3 rounded-xl bg-transparent 
+                               border border-white/20 text-white text-sm
+                               focus:outline-none focus:border-white
+                               focus:ring-2 focus:ring-white/30 transition">
+                </div>
+
+                <!-- Konfirmasi Password -->
+                <div>
+                    <label class="text-sm text-gray-300">Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" required
+                        class="w-full mt-2 px-4 py-3 rounded-xl bg-transparent 
+                               border border-white/20 text-white text-sm
+                               focus:outline-none focus:border-white
+                               focus:ring-2 focus:ring-white/30 transition">
+                </div>
+
+                <!-- Role -->
+                <div>
+                    <label class="text-sm text-gray-300">Pilih Role</label>
+                    <select name="role" required
+                        class="w-full mt-2 px-4 py-3 rounded-xl bg-transparent 
+                               border border-white/20 text-white text-sm
+                               focus:outline-none focus:border-white
+                               focus:ring-2 focus:ring-white/30 transition">
+                        <option value="" class="text-black">-- Pilih Role --</option>
+                        <option value="penjual" class="text-black">Penjual</option>
+                        <option value="pembeli" class="text-black">Pembeli</option>
+                    </select>
+                </div>
+
+                <!-- Button -->
+                <button type="submit"
+                    class="w-full py-3 rounded-xl bg-white text-black 
+                           font-semibold tracking-wide
+                           hover:bg-gray-200 hover:scale-[1.02]
+                           transition duration-300">
+                    DAFTAR
+                </button>
+            </form>
+
+            <!-- Login -->
+            <div class="mt-6 text-center text-sm text-gray-400">
+                Sudah punya akun?
+                <a href="/login" class="text-white font-medium hover:underline transition">
+                    Login
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
