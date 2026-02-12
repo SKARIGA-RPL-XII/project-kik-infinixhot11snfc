@@ -12,6 +12,7 @@ use App\Http\Controllers\CheckoutController ;
 use App\Http\Controllers\Penjual\PesananController;
 
 Route::prefix('penjual')->name('penjual.')->middleware(['auth', 'role:penjual'])->group(function () {
+    Route::get('produk', [ProdukController::class, 'indexPenjual'])->name('produk.index');
     Route::get('pesanan', [PesananController::class, 'index'])->name('pesanan.index');
     Route::get('pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.show');
     // 🔥 TAMBAHKAN INI
@@ -52,7 +53,8 @@ Route::middleware('auth')
     ->prefix('pelanggan')
     ->name('pelanggan.')
     ->group(function () {
-
+        Route::get('produk', [ProdukController::class, 'indexPelanggan'])->name('produk.index');
+        Route::get('produk/{id}', [ProdukController::class, 'showPelanggan'])->name('produk.show');
         // Home
         Route::get('/home', [PelangganController::class, 'home'])
             ->name('home');

@@ -4,28 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ProdukController extends Controller
 {
-    // Tampilkan semua produk
-    public function index()
-{
-    $produk = DB::table('produk')
-        ->join('usaha', 'produk.id_usaha', '=', 'usaha.id_usaha')
-        ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
-        ->where('usaha.id_user', auth()->id())
-        ->select(
-            'produk.*',
-            'usaha.nama_usaha',
-            'kategori.nama_kategori'
-        )
-        ->get();
+    // =========================
+    // UNTUK PENJUAL
+    // =========================
 
-    return view('penjual.produk.index', compact('produk'));
-}
+    // Tampilkan semua produk penjual
+    public function indexPenjual()
+    {
+        $produk = DB::table('produk')
+            ->join('usaha', 'produk.id_usaha', '=', 'usaha.id_usaha')
+            ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
+            ->where('usaha.id_user', auth()->id())
+            ->select(
+                'produk.*',
+                'usaha.nama_usaha',
+                'kategori.nama_kategori'
+            )
+            ->get();
 
-    // Tampilkan form tambah produk
+        return view('penjual.produk.index', compact('produk'));
+    }
+
     public function create()
     {
         $usaha = DB::table('usaha')
@@ -35,7 +38,6 @@ class ProdukController extends Controller
         return view('penjual.produk.create', compact('usaha', 'kategori'));
     }
 
-    // Simpan produk baru
     public function store(Request $request)
     {
         $request->validate([
@@ -54,8 +56,6 @@ class ProdukController extends Controller
 
         $data = $request->except(['_token', 'gambar']);
 
-
-        // Upload gambar jika ada
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -68,7 +68,6 @@ class ProdukController extends Controller
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil ditambahkan');
     }
 
-    // Tampilkan form edit
     public function edit($id)
     {
         $produk = DB::table('produk')->where('id_produk', $id)->first();
@@ -77,10 +76,9 @@ class ProdukController extends Controller
             ->get();
         $kategori = DB::table('kategori')->get();
 
-        return view('produk.edit', compact('produk', 'usaha', 'kategori'));
+        return view('penjual.produk.edit', compact('produk', 'usaha', 'kategori'));
     }
 
-    // Update produk
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -99,9 +97,7 @@ class ProdukController extends Controller
 
         $data = $request->except(['_token', 'gambar']);
 
-
         if ($request->hasFile('gambar')) {
-            // hapus gambar lama
             $produk = DB::table('produk')->where('id_produk', $id)->first();
             if ($produk && $produk->gambar && file_exists(public_path('uploads/produk/' . $produk->gambar))) {
                 unlink(public_path('uploads/produk/' . $produk->gambar));
@@ -118,7 +114,6 @@ class ProdukController extends Controller
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil diupdate');
     }
 
-    // Hapus produk
     public function destroy($id)
     {
         $produk = DB::table('produk')->where('id_produk', $id)->first();
@@ -129,5 +124,43 @@ class ProdukController extends Controller
         DB::table('produk')->where('id_produk', $id)->delete();
 
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil dihapus');
+    }
+
+    // =========================
+    // UNTUK PELANGGAN
+    // =========================
+
+    // Semua produk tersedia
+    public function indexPelanggan()
+{
+    $produkTersedia = DB::table('produk')
+        ->join('usaha', 'produk.id_usaha', '=', 'usaha.id_usaha')
+        ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
+        // Ambil semua produk tanpa memfilter user
+        ->select('produk.*', 'usaha.nama_usaha', 'kategori.nama_kategori')
+        ->get();
+
+    $cartCount = Auth::check() 
+        ? DB::table('cart')->where('id_user', Auth::id())->count() 
+        : 0;
+
+    return view('pelanggan.produk.index', compact('produkTersedia', 'cartCount'));
+}
+
+    // Detail produk pelanggan
+    public function showPelanggan($id)
+    {
+        $produk = DB::table('produk')
+            ->join('usaha', 'produk.id_usaha', '=', 'usaha.id_usaha')
+            ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
+            ->where('produk.id_produk', $id)
+            ->select('produk.*', 'usaha.nama_usaha', 'kategori.nama_kategori')
+            ->first();
+
+        $cartCount = Auth::check() 
+            ? DB::table('cart')->where('id_users', Auth::id())->count() 
+            : 0;
+
+        return view('pelanggan.produk.show', compact('produk', 'cartCount'));
     }
 }
