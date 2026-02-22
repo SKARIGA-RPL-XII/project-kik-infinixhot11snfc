@@ -162,14 +162,19 @@
                     </p>
                 </div>
 
-                <a href="{{ route('checkout.index') }}"
-                   class="px-8 py-3 rounded-full
-                          bg-zinc-900 text-white
-                          text-sm font-medium
-                          hover:bg-black
-                          transition duration-300">
-                    Lanjut ke Checkout
-                </a>
+                <form action="{{ route('checkout.process') }}" method="POST">
+                    @csrf
+                
+                    <button type="submit"
+                        class="px-8 py-3 rounded-full
+                               bg-zinc-900 text-white
+                               text-sm font-medium
+                               hover:bg-black
+                               transition duration-300">
+                        Lanjut ke Checkout
+                    </button>
+                
+                </form>
 
             </div>
 

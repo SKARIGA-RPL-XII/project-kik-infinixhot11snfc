@@ -33,18 +33,17 @@ class PesananController extends Controller
 
     // Detail pesanan
     public function show($id)
-    {
-        $idUsaha = Auth::user()->usaha->id_usaha ?? null;
+{
+    $idUsaha = Auth::user()->usaha->id_usaha ?? null;
 
-        $order = Transaksi::with(['user', 'transaksiDetail.produk'])
-            ->where('id_transaksi', $id)
-            ->whereHas('transaksiDetail.produk', function($q) use ($idUsaha) {
-                $q->where('id_usaha', $idUsaha);
-            })
-            ->firstOrFail();
+    $order = Transaksi::with(['user', 'transaksiDetail.produk'])
+        ->where('id_transaksi', $id)
+        ->where('id_usaha', $idUsaha) // filter usaha di transaksi saja
+        ->firstOrFail();
 
-        return view('penjual.pesanan.show', compact('order'));
-    }
+    return view('penjual.pesanan.show', compact('order'));
+}
+    
      // 🔥 TAMBAHKAN DI SINI
      public function edit($id)
      {

@@ -22,140 +22,58 @@ class CheckoutController extends Controller
     |--------------------------------------------------------------------------
     */
     public function process(Request $request)
-    {
-        $user = Auth::user();
-    
-        // Ambil cart user
-        $cartItems = Cart::with('produk')
-            ->where('id_user', $user->id_user)
-            ->get();
-    
-        if ($cartItems->isEmpty()) {
-            return redirect()->back()->with('error', 'Keranjang kosong!');
-        }
-    
-        $total = 0;
-
-foreach ($cartItems as $item) {
-    $total += $item->quantity * $item->produk->harga_jual;
-}
-dd($total);
-
-    
-        DB::beginTransaction();
-    
-        try {
-    
-            // 1️⃣ Buat transaksi
-            $transaksi = Transaksi::create([
-                'id_usaha' => 1,
-                'id_user' => $user->id_user,
-                'id_pelanggan' => $user->id_user,
-                'kode_transaksi' => 'TRX-' . strtoupper(Str::random(8)),
-                'tanggal' => now(),
-                'total' => $total,
-                'diskon' => 0,
-                'pajak' => 0,
-                'ongkir' => 0,
-                'grand_total' => $total,
-                'status' => 'pending',
-            ]);
-    
-            // 2️⃣ Simpan detail transaksi
-            foreach ($cartItems as $item) {
-                TransaksiDetail::create([
-                    'id_transaksi' => $transaksi->id_transaksi,
-                    'id_produk' => $item->id_produk,
-                    'qty' => $item->quantity,
-                    'harga' => $item->produk->harga_jual,
-                    'subtotal' => $item->quantity * $item->produk->harga_jual,
-                ]);
-            }
-    
-            DB::commit();
-    
-        } catch (\Exception $e) {
-            DB::rollback();
-            return back()->with('error', $e->getMessage());
-        }
-    
-        /*
-        |--------------------------------------------------------------------------
-        | MIDTRANS
-        |--------------------------------------------------------------------------
-        */
-    
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = false;
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
-    
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transaksi->kode_transaksi,
-                'gross_amount' => (int) $total,
-            ],
-            'customer_details' => [
-                'first_name' => $user->name,
-                'email'      => $user->email,
-            ],
-            'callbacks' => [
-                'finish' => route('checkout.success') // lebih baik pakai route() daripada url()
-            ]
-        ];        
-        
-        dd($total);
-
-        $snapToken = Snap::getSnapToken($params);
-    
-        return view('checkout.payment', compact('snapToken', 'transaksi'));
-    }    
-    
-    public function index()
 {
-    $user = auth()->user();
+    $user = Auth::user();
 
     $cartItems = Cart::with('produk')
         ->where('id_user', $user->id_user)
         ->get();
 
     if ($cartItems->isEmpty()) {
-        return redirect()->back()->with('error', 'Keranjang kosong');
+        return back()->with('error', 'Keranjang kosong!');
     }
 
-    // Hitung total
     $total = 0;
+    foreach ($cartItems as $item) {
+        $total += $item->quantity * $item->produk->harga_jual;
+    }
 
-foreach ($cartItems as $item) {
-    $total += $item->quantity * $item->produk->harga_jual;
-}
+    DB::beginTransaction();
 
-    /*
-    |--------------------------------------------------------------------------
-    | BUAT TRANSAKSI (WAJIB SESUAI STRUKTUR DB)
-    |--------------------------------------------------------------------------
-    */
+    try {
 
-    $transaksi = Transaksi::create([
-    'id_usaha' => 1,
-    'id_user' => auth()->user()->id_user,
-    'kode_transaksi' => 'TRX-' . strtoupper(uniqid()),
-    'tanggal' => now(),
-    'total' => $total,
-    'diskon' => 0,
-    'pajak' => 0,
-    'ongkir' => 0,
-    'grand_total' => $total,
-    'status' => 'pending'
-]);
+        $transaksi = Transaksi::create([
+            'id_usaha' => 1,
+            'id_user' => $user->id_user,
+            'id_pelanggan' => $user->id_user,
+            'kode_transaksi' => 'TRX-' . strtoupper(Str::random(8)),
+            'tanggal' => now(),
+            'total' => $total,
+            'diskon' => 0,
+            'pajak' => 0,
+            'ongkir' => 0,
+            'grand_total' => $total,
+            'status' => 'pending',
+        ]);
 
+        foreach ($cartItems as $item) {
+            TransaksiDetail::create([
+                'id_transaksi' => $transaksi->id_transaksi,
+                'id_produk' => $item->id_produk,
+                'qty' => $item->quantity,
+                'harga' => $item->produk->harga_jual,
+                'subtotal' => $item->quantity * $item->produk->harga_jual,
+            ]);
+        }
 
-    /*
-    |--------------------------------------------------------------------------
-    | MIDTRANS
-    |--------------------------------------------------------------------------
-    */
+        DB::commit();
 
+    } catch (\Exception $e) {
+        DB::rollback();
+        return back()->with('error', $e->getMessage());
+    }
+
+    // MIDTRANS
     Config::$serverKey = config('midtrans.server_key');
     Config::$isProduction = false;
     Config::$isSanitized = true;
@@ -166,19 +84,52 @@ foreach ($cartItems as $item) {
             'order_id' => $transaksi->kode_transaksi,
             'gross_amount' => (int) $total,
         ],
-        'customer_details' => [
-            'first_name' => $user->name,
-            'email'      => $user->email,
-        ],
-        'callbacks' => [
-            'finish' => route('checkout.success') // lebih baik pakai route() daripada url()
-        ]
-    ];    
+    ];
 
     $snapToken = Snap::getSnapToken($params);
 
-    return view('checkout.index', compact('cartItems', 'transaksi', 'snapToken'));
+    return view('checkout.payment', compact('snapToken', 'transaksi', 'total'));
+}    
+    
+    public function index()
+{
+    $userId = auth()->user()->id_user;
+
+    $cartItems = Cart::with('produk')
+        ->where('id_user', $userId)
+        ->get();
+
+    if ($cartItems->isEmpty()) {
+        return redirect()->route('cart.index')
+            ->with('error', 'Cart kosong');
+    }
+
+    $total = $cartItems->sum(function ($item) {
+        return $item->quantity * $item->produk->harga_jual;
+    });
+
+    // =====================
+    // CONFIG MIDTRANS
+    // =====================
+    Config::$serverKey = config('midtrans.server_key');
+    Config::$isProduction = false;
+    Config::$isSanitized = true;
+    Config::$is3ds = true;
+
+    $params = [
+        'transaction_details' => [
+            'order_id' => 'ORDER-' . uniqid(),
+            'gross_amount' => $total,
+        ],
+    ];
+
+    return view('checkout.index', compact(
+        'cartItems',
+        'total',
+        'snapToken'
+    ));
 }
+
 public function success(Request $request)
 {
     $user = auth()->user();

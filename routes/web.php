@@ -12,6 +12,9 @@ use App\Http\Controllers\CheckoutController ;
 use App\Http\Controllers\Penjual\PesananController;
 
 Route::prefix('penjual')->name('penjual.')->middleware(['auth', 'role:penjual'])->group(function () {
+    
+    
+    
     Route::get('produk', [ProdukController::class, 'indexPenjual'])->name('produk.index');
     Route::get('pesanan', [PesananController::class, 'index'])->name('pesanan.index');
     Route::get('pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.show');
@@ -27,8 +30,6 @@ Route::put('pesanan/{id}', [PesananController::class, 'update'])
 
 });
 
-Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
-
 Route::middleware('auth')->group(function () {
 
     Route::get('/checkout', [CheckoutController::class, 'index'])
@@ -36,6 +37,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/checkout/process', [CheckoutController::class, 'process'])
         ->name('checkout.process');
+
+    Route::get('/checkout/success', [CheckoutController::class, 'success'])
+        ->name('checkout.success');
 });
 
 Route::get('/checkout/pay/{id}', [CheckoutController::class, 'pay'])
@@ -74,13 +78,6 @@ Route::middleware('auth')
 
         Route::post('/cart/decrease/{id}', [CartController::class, 'decrease'])
             ->name('cart.decrease');
-
-        // Checkout
-        Route::get('/checkout', [CheckoutController::class, 'index'])
-            ->name('checkout.index');
-
-        Route::post('/checkout', [CheckoutController::class, 'store'])
-            ->name('checkout.store');
 });
 
 // Route::get('/pelanggan/home', [PelangganController::class, 'home'])

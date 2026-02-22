@@ -13,7 +13,7 @@ class ProdukController extends Controller
     // =========================
 
     // Tampilkan semua produk penjual
-    public function indexPenjual()
+    public function index()
     {
         $produk = DB::table('produk')
             ->join('usaha', 'produk.id_usaha', '=', 'usaha.id_usaha')
@@ -163,4 +163,5 @@ class ProdukController extends Controller
 
         return view('pelanggan.produk.show', compact('produk', 'cartCount'));
     }
+    
 }

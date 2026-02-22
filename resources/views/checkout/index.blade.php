@@ -31,7 +31,7 @@
                 </p>
 
                 <h2 class="text-4xl font-semibold tracking-tight text-zinc-900">
-                    Rp {{ number_format($transaksi->grand_total,0,',','.') }}
+                    Rp {{ number_format($total,0,',','.') }}
                 </h2>
             </div>
 

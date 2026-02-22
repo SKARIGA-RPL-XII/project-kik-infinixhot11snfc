@@ -22,7 +22,6 @@ class Transaksi extends Model
     protected $fillable = [
         'id_usaha',
         'id_user',
-        'id_pelanggan',
         'kode_transaksi',
         'tanggal',
         'total',
@@ -64,7 +63,10 @@ public function pembayaran()
 }
 
 public function transaksiDetail() {
-    return $this->hasMany(TransaksiDetail::class, 'id_transaksi');
+    return $this->hasMany(TransaksiDetail::class,
+        'id_transaksi',   // foreign key di detail
+        'id_transaksi'    // local key di transaksi
+);
 }
 
 
